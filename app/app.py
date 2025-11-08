@@ -1,11 +1,10 @@
 from flask import Flask
-import os
+import redis
+
 app = Flask(__name__)
+cache = redis.Redis(host='redis', port=6379)
 
 @app.route('/')
 def home():
-    return "<h1>hello world :)</h1>"
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', 
-            port=int(os.environ.get('PORT', 5000)))
+    count = cache.incr('hits')
+    return f"<h1>Hello! This page has been visited {count} times.</h1>"
